@@ -14,23 +14,17 @@ pipeline {
         }
 		stage('Build') {
             steps {
-                dir('reppido') {
-                    sh 'mvn package -DskipTests'
-                }
+                sh 'mvn package -DskipTests'
             }
         }
         stage('Unit Test') {
             steps {
-                dir('reppido') {
-                    sh 'mvn clean test'
-                }
+                sh 'mvn clean test'
             }
         }
         stage('Integration Test') {
             steps {
-                dir('reppido') {
-                    sh 'mvn failsafe:integration-test failsafe:verify'
-                }
+                sh 'mvn failsafe:integration-test failsafe:verify'
             }
         }
     }
