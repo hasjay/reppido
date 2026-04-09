@@ -14,12 +14,12 @@ pipeline {
         }
 		stage('Build') {
             steps {
-                sh 'mvn package -DskipTests'
+                sh 'mvn clean package -DskipTests'
             }
         }
         stage('Unit Test') {
             steps {
-                sh 'mvn clean test'
+                sh 'mvn test'
             }
         }
         stage('Integration Test') {
