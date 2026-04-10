@@ -26,6 +26,6 @@ public class ReportController {
     
     @GetMapping("/any")
     public ResponseEntity<String> getReport() {
-        return ResponseEntity.status(HttpStatus.OK).body("Report : 800");
+        return ResponseEntity.status(HttpStatus.OK).body("Report : 900");
     }
 }
