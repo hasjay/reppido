@@ -4,6 +4,9 @@ import com.hasjay.reppido.report.dto.CreateReportRequest;
 import com.hasjay.reppido.report.dto.ReportResponse;
 import com.hasjay.reppido.report.service.ReportService;
 import jakarta.validation.Valid;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +28,7 @@ public class ReportController {
     }
     
     @GetMapping
-    public ResponseEntity<String> getReports() {
-        return ResponseEntity.status(HttpStatus.OK).body("Report : 900");
+    public ResponseEntity<List<ReportResponse>> getReports() {
+        return ResponseEntity.status(HttpStatus.OK).body(reportService.getReports());
     }
 }

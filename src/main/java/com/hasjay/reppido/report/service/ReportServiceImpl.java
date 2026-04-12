@@ -11,6 +11,7 @@ import com.hasjay.reppido.report.model.Report;
 import com.hasjay.reppido.report.repository.ReportRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ public class ReportServiceImpl implements ReportService{
         this.categoryRepository = categoryRepository;
     }
 
+    @Override
     @Transactional
     public ReportResponse createReport(CreateReportRequest request) {
         Category category = categoryRepository.findById(request.getCategoryId())
@@ -46,20 +48,28 @@ public class ReportServiceImpl implements ReportService{
 
         Report saved = reportRepository.save(report);
 
-        CategoryResponse categoryResponse = CategoryResponse.builder()
-                .id(saved.getCategory().getId())
-                .name(saved.getCategory().getName())
-                .status(saved.getCategory().getStatus())
-                .build();
-
-        return ReportResponse.builder()
-                .id(saved.getId())
-                .category(categoryResponse)
-                .description(saved.getDescription())
-                .location(saved.getLocation())
-                .longitude(saved.getLongitude())
-                .latitude(saved.getLatitude())
-                .createdOn(saved.getCreatedOn())
-                .build();
+        return toReportResponse(saved);
     }
+
+	@Override
+	public List<ReportResponse> getReports() {
+		List<Report> reports = reportRepository.findAll();
+		return reports.stream().map(this::toReportResponse).toList();
+	}
+	
+	private ReportResponse toReportResponse(Report r) {
+		CategoryResponse categoryResponse = CategoryResponse.builder()
+                .id(r.getCategory().getId())
+                .name(r.getCategory().getName())
+                .build();
+		return ReportResponse.builder()
+        .id(r.getId())
+        .category(categoryResponse)
+        .description(r.getDescription())
+        .location(r.getLocation())
+        .longitude(r.getLongitude())
+        .latitude(r.getLatitude())
+        .createdOn(r.getCreatedOn())
+        .build();
+	}
 }
