@@ -42,7 +42,7 @@ src/main/java/{package}     # Base package
 |-- {feature}/               # Feature Ex Report, Order
         |-- controller/      # REST controller
         |--dto/              # Request/response objects
-        |-- service/         # Business logic
+        |-- service/         # Business logic (interface + impl)
         |-- repository/      # Spring Data JPA repository
         |-- model/           # JPA entities
 |-- exception/               # Custom exceptions
@@ -66,6 +66,7 @@ src/test/java/{package}     # Base package
 - Prefer constructor injection over field injection
 - Avoid circular dependencies
 - Keep methods small and readable and use meaningful name according to the feature
+- Do Interface-Driven development
 - Reduce boilerplate code
 - Do not use deprecated method
 - Update pom.xml for relevant dependencies

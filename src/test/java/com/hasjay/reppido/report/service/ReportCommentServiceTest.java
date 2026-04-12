@@ -35,7 +35,7 @@ class ReportCommentServiceTest {
     private ReportCommentRepository reportCommentRepository;
 
     @InjectMocks
-    private ReportCommentService reportCommentService;
+    private ReportCommentServiceImpl reportCommentService;
 
     private Report report;
     private ReportComment savedComment;

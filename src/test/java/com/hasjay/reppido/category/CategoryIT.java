@@ -160,12 +160,11 @@ class CategoryIT {
     void testGetActiveMainCategories_returnsOnlyActive() throws Exception {
         // Create ACTIVE category
         CreateCategoryRequest activeRequest = new CreateCategoryRequest("Road", new ArrayList<>());
-        MvcResult result = mockMvc.perform(post("/categories")
+        mockMvc.perform(post("/categories")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(activeRequest)))
                 .andExpect(status().isCreated())
                 .andReturn();
-        CategoryResponse active = objectMapper.readValue(result.getResponse().getContentAsString(), CategoryResponse.class);
 
         // Set INACTIVE via patch
         CreateCategoryRequest inactiveRequest = new CreateCategoryRequest("Park", new ArrayList<>());

@@ -34,7 +34,7 @@ class ReportServiceTest {
     private CategoryRepository categoryRepository;
 
     @InjectMocks
-    private ReportService reportService;
+    private ReportServiceImpl reportService;
 
     private CreateReportRequest request;
     private Category mainCategory;
