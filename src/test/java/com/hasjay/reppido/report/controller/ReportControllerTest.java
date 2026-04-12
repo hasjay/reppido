@@ -1,5 +1,9 @@
 package com.hasjay.reppido.report.controller;
 
+import com.hasjay.reppido.category.dto.CategoryResponse;
+import com.hasjay.reppido.category.model.CategoryStatus;
+import com.hasjay.reppido.exception.CategoryNotFoundException;
+import com.hasjay.reppido.exception.InvalidCategoryException;
 import com.hasjay.reppido.report.dto.CreateReportRequest;
 import com.hasjay.reppido.report.dto.ReportResponse;
 import com.hasjay.reppido.report.service.ReportService;
@@ -34,16 +38,22 @@ class ReportControllerTest {
     @Test
     void testCreateReport() throws Exception {
         CreateReportRequest request = new CreateReportRequest(
-                "Road",
+                2,
                 "Large pothole on main street",
                 "Main Street",
                 79.8612,
                 6.9271
         );
 
+        CategoryResponse categoryResponse = CategoryResponse.builder()
+                .id(2)
+                .name("Pothole")
+                .status(CategoryStatus.ACTIVE)
+                .build();
+
         ReportResponse response = ReportResponse.builder()
                 .id(1)
-                .category("Pothole")
+                .category(categoryResponse)
                 .description("Large pothole on main street")
                 .location("Main Street")
                 .longitude(79.8612)
@@ -58,7 +68,8 @@ class ReportControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.category").value("Pothole"))
+                .andExpect(jsonPath("$.category.id").value(2))
+                .andExpect(jsonPath("$.category.name").value("Pothole"))
                 .andExpect(jsonPath("$.location").value("Main Street"))
                 .andExpect(jsonPath("$.longitude").value(79.8612))
                 .andExpect(jsonPath("$.latitude").value(6.9271));
@@ -78,7 +89,7 @@ class ReportControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.category").exists())
+                .andExpect(jsonPath("$.categoryId").exists())
                 .andExpect(jsonPath("$.location").exists())
                 .andExpect(jsonPath("$.longitude").exists())
                 .andExpect(jsonPath("$.latitude").exists());
@@ -87,16 +98,22 @@ class ReportControllerTest {
     @Test
     void testCreateReportWithoutDescription() throws Exception {
         CreateReportRequest request = new CreateReportRequest(
-                "Pothole",
+                2,
                 null,
                 "Main Street",
                 79.8612,
                 6.9271
         );
 
+        CategoryResponse categoryResponse = CategoryResponse.builder()
+                .id(2)
+                .name("Pothole")
+                .status(CategoryStatus.ACTIVE)
+                .build();
+
         ReportResponse response = ReportResponse.builder()
                 .id(2)
-                .category("Pothole")
+                .category(categoryResponse)
                 .description(null)
                 .location("Main Street")
                 .longitude(79.8612)
@@ -111,5 +128,45 @@ class ReportControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(2));
+    }
+
+    @Test
+    void testCreateReportCategoryNotFound() throws Exception {
+        CreateReportRequest request = new CreateReportRequest(
+                99,
+                null,
+                "Main Street",
+                79.8612,
+                6.9271
+        );
+
+        when(reportService.createReport(any(CreateReportRequest.class)))
+                .thenThrow(new CategoryNotFoundException(99));
+
+        mockMvc.perform(post("/reports")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").exists());
+    }
+
+    @Test
+    void testCreateReportNotSubcategory() throws Exception {
+        CreateReportRequest request = new CreateReportRequest(
+                1,
+                null,
+                "Main Street",
+                79.8612,
+                6.9271
+        );
+
+        when(reportService.createReport(any(CreateReportRequest.class)))
+                .thenThrow(new InvalidCategoryException("Report category must be a subcategory"));
+
+        mockMvc.perform(post("/reports")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("Report category must be a subcategory"));
     }
 }

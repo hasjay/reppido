@@ -1,5 +1,6 @@
 package com.hasjay.reppido.report.model;
 
+import com.hasjay.reppido.category.model.Category;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,8 +21,9 @@ public class Report {
 	@SequenceGenerator(name = "report_seq", sequenceName = "repo_id_seq", allocationSize = 1)
     private Integer id;
 
-    @Column(name = "repo_category", nullable = false)
-    private String category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "repo_category_id", nullable = false)
+    private Category category;
 
     @Column(name = "repo_description")
     private String description;
