@@ -1,6 +1,10 @@
 package com.hasjay.reppido.report.repository;
 
+import com.hasjay.reppido.category.model.Category;
+import com.hasjay.reppido.category.model.CategoryStatus;
+import com.hasjay.reppido.category.repository.CategoryRepository;
 import com.hasjay.reppido.report.model.Report;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -18,10 +22,29 @@ class ReportRepositoryTest {
     @Autowired
     private ReportRepository reportRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    private Category subcategory;
+
+    @BeforeEach
+    void setUp() {
+        Category mainCategory = categoryRepository.save(Category.builder()
+                .name("Road")
+                .status(CategoryStatus.ACTIVE)
+                .build());
+
+        subcategory = categoryRepository.save(Category.builder()
+                .mainCategory(mainCategory)
+                .name("Pothole")
+                .status(CategoryStatus.ACTIVE)
+                .build());
+    }
+
     @Test
     void testSaveReport() {
         Report report = Report.builder()
-                .category("Pothole")
+                .category(subcategory)
                 .description("Large pothole on main street")
                 .location("Main Street")
                 .longitude(79.8612)
@@ -36,7 +59,7 @@ class ReportRepositoryTest {
 
         Optional<Report> found = reportRepository.findById(saved.getId());
         assertTrue(found.isPresent());
-        assertEquals("Pothole", found.get().getCategory());
+        assertEquals("Pothole", found.get().getCategory().getName());
         assertEquals("Main Street", found.get().getLocation());
         assertEquals(79.8612, found.get().getLongitude());
         assertEquals(6.9271, found.get().getLatitude());
@@ -45,7 +68,7 @@ class ReportRepositoryTest {
     @Test
     void testSaveReportWithoutDescription() {
         Report report = Report.builder()
-                .category("Garbage")
+                .category(subcategory)
                 .location("Park Avenue")
                 .longitude(80.0000)
                 .latitude(7.0000)

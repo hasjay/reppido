@@ -13,8 +13,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CreateReportRequest {
 
-    @NotBlank(message = "Category is required")
-    private String category;
+    @NotNull(message = "Category is required")
+    private Integer categoryId;
 
     private String description;
 

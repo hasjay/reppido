@@ -1,5 +1,6 @@
 package com.hasjay.reppido.report.dto;
 
+import com.hasjay.reppido.category.dto.CategoryResponse;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 public class ReportResponse {
 
     private Integer id;
-    private String category;
+    private CategoryResponse category;
     private String description;
     private String location;
     private Double longitude;
