@@ -5,9 +5,18 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 
 @Entity
 @Table(name = "rp_reports")
+@NamedEntityGraph(
+	    name = "Report.withCategotyAndComments",
+	    attributeNodes = {
+	        @NamedAttributeNode("comments"),
+	        @NamedAttributeNode("category")
+	    }
+	)
 @Getter
 @Setter
 @Builder
@@ -39,4 +48,7 @@ public class Report {
 
     @Column(name = "repo_create_on", nullable = false, updatable = false)
     private LocalDateTime createdOn;
+    
+    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<ReportComment> comments;
 }

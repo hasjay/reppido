@@ -53,7 +53,7 @@ public class ReportServiceImpl implements ReportService{
 
 	@Override
 	public List<ReportResponse> getReports() {
-		List<Report> reports = reportRepository.findAll();
+		List<Report> reports = reportRepository.getReports();
 		return reports.stream().map(this::toReportResponse).toList();
 	}
 	
